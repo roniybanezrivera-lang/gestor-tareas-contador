@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Control Contable - Web</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #378ADD;
+            --success: #639922;
+            --warning: #BA7517;
+            --danger: #E24B4A;
+            --bg-light: #F9F8F6;
+            --bg-card: #FFFFFF;
+            --border: #E0DDD8;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --text-muted: #999;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border);
+            background-color: var(--bg-card);
+            padding: 0 1.5rem;
+        }
+
+        .tab-btn {
+            flex: 0 0 auto;
+            padding: 1rem 1.5rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .content {
+            padding: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .stat-value.primary { color: var(--primary); }
+        .stat-value.success { color: var(--success); }
+        .stat-value.warning { color: var(--warning); }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+        }
+
+        input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-danger {
+            background-color: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .task-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .task-header {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            align-items: flex-start;
+        }
+
+        .task-checkbox {
+            margin-top: 0.25rem;
+            flex-shrink: 0;
+        }
+
+        .task-title {
+            flex: 1;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .task-title.completed {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: white;
+            margin-right: 0.5rem;
+        }
+
+        .badge-critical { background-color: var(--danger); }
+        .badge-high { background-color: var(--warning); }
+        .badge-normal { background-color: var(--primary); }
+        .badge-success { background-color: var(--success); }
+
+        .task-meta {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .progress-container {
+            margin-bottom: 1rem;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: var(--bg-light);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background-color: var(--bg-light);
+        }
+
+        .responsible-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .responsible-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .responsible-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-responsible {
+            text-align: center;
+        }
+
+        .stat-responsible-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .stat-responsible-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .sync-indicator {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            padding: 0.75rem 1rem;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sync-indicator.synced {
+            color: var(--success);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            th, td {
+                padding: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Centro de Control Contable</h1>
+            <p>Gestión de tareas en tiempo real - Contador + Asistente</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="cambiarTab('resumen')">📋 Resumen</button>
+            <button class="tab-btn" onclick="cambiarTab('tareas')">📊 Tareas</button>
+            <button class="tab-btn" onclick="cambiarTab('responsables')">👥 Responsables</button>
+        </div>
+
+        <div class="content">
+            <div id="resumen" class="tab-content active">
+                <div class="card">
+                    <h2 style="margin-bottom: 1rem;">Seleccionar día</h2>
+                    <div class="input-group">
+                        <label>Fecha</label>
+                        <input type="date" id="fechaResumen" onchange="actualizarResumen()">
+                    </div>
+                    <div style="font-size: 0.95rem; color: var(--text-secondary);" id="fechaTexto"></div>
+                </div>
+
+                <div class="stat-grid" id="statsResumen"></div>
+                <div id="tablaResumen"></div>
+            </div>
+
+            <div id="tareas" class="tab-content">
+                <div class="stat-grid" id="statsTareas"></div>
+
+                <div class="card">
+                    <h2 style="margin-bottom: 1rem;">Filtros</h2>
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>Responsable</label>
+                            <select id="filtroResponsable" onchange="filtrarTareas()">
+                                <option value="todos">Todos</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Categoría</label>
+                            <select id="filtroCategoria" onchange="filtrarTareas()">
+                                <option value="todos">Todas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="busqueda" placeholder="🔍 Buscar tareas..." onkeyup="filtrarTareas()">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 style="margin-bottom: 1rem;">Agregar nueva tarea</h2>
+                    <div class="input-group">
+                        <label>Descripción</label>
+                        <textarea id="nuevaTarea" placeholder="Descripción de la tarea..." rows="2"></textarea>
+                    </div>
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>Responsable</label>
+                            <select id="nuevaTareaResponsable"></select>
+                        </div>
+                        <div class="input-group">
+                            <label>Prioridad</label>
+                            <select id="nuevaTareaPrioridad">
+                                <option value="1">Crítica</option>
+                                <option value="3">Alta</option>
+                                <option value="5" selected>Normal</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="agregarTarea()">+ Agregar tarea</button>
+                </div>
+
+                <div id="listaTareas"></div>
+            </div>
+
+            <div id="responsables" class="tab-content">
+                <div class="card">
+                    <h2 style="margin-bottom: 1rem;">Agregar responsable</h2>
+                    <div class="input-group">
+                        <label>Nombre</label>
+                        <input type="text" id="nuevoResponsable" placeholder="Nombre del responsable...">
+                    </div>
+                    <button class="btn-primary" onclick="agregarResponsable()">+ Agregar</button>
+                </div>
+
+                <div id="listaResponsables"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sync-indicator synced" id="syncIndicator">
+        <div class="dot"></div>
+        <span>Sincronizado</span>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js"></script>
+    <script>
+        let db = null;
+        let tareas = [];
+        let responsables = ['Contador', 'Asistente Contable'];
+        
+        const tareasIniciales = [
+            { nombre: "Declarar impuestos SIRE de SOFT y GESTOR", prioridad: 1, categoria: "Impuestos", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Respuesta de Liliana para declarar impuestos de SOFT y GESTOR", prioridad: 2, categoria: "Impuestos", responsable: "Contador", tipo: "especifica" },
+            { nombre: "DJ Anual GESTOR revisar vacaciones", prioridad: 4, categoria: "Impuestos", responsable: "Asistente Contable", tipo: "especifica" },
+            { nombre: "Renta de primera categoría de oficina y vehículo", prioridad: 5, categoria: "Sustento Contable", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Consultar al área legal por domicilio del Sr. Víctor para PDT 617", prioridad: 7, categoria: "Validación Legal", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Analizar cuentas entre relacionadas SOFT y GESTOR", prioridad: 9, categoria: "Conciliación", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Elaboración de EEFF de SOFT", prioridad: 10, categoria: "Reportes", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Consultar vinculación de SOFT y GESTOR a Liliana", prioridad: 11, categoria: "Validación", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Obtener respuestas Jair (Facturas varias)", prioridad: 12, categoria: "Pendientes", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Iniciar carga del Plan de Cuentas de INCATEC", prioridad: 8, categoria: "Sistema", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Revisar flujo de SOFT para emitir factura con nuevo importe", prioridad: 13, categoria: "Facturación", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Cambiar DNI y usuario de AFP NET a mi nombre", prioridad: 1, categoria: "Trámites", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Solicitar constancias de bancos a Jair", prioridad: 2, categoria: "Conciliación", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Autodetracciones de ICREDIT", prioridad: 3, categoria: "Impuestos", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Emitir facturas de junio por cobro de intereses SOFT a GESTOR", prioridad: 4, categoria: "Facturación", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Pagar renta por cobro de interés de SOFT a GESTOR", prioridad: 3, categoria: "Impuestos", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Extornar asiento de boletas gratuitas en junio", prioridad: 5, categoria: "Ajustes", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Provisionar intereses de fraccionamientos devengados", prioridad: 6, categoria: "Provisiones", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Solicitar contratos legalizados y revisar envío de Renato", prioridad: 7, categoria: "Sustento Contable", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Gestionar file de factoring por cliente Jackeline", prioridad: 8, categoria: "Finanzas", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Consultar capitalización con área legal", prioridad: 9, categoria: "Legal", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Elaborar plan de cuentas INCATEC y subir al TSI", prioridad: 10, categoria: "Sistema", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Fraccionar IGV Nov 2025 en compromiso de pago con SUNAT", prioridad: 1, categoria: "Impuestos", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Poner al día Libros Mayor y Diario (atraso 2022)", prioridad: 2, categoria: "Regularización", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Proyectar EEFF de GESTOR EGYP a diciembre 2026", prioridad: 3, categoria: "Proyecciones", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Informar sobre vacaciones FSM en planilla", prioridad: 4, categoria: "Nómina", responsable: "Asistente Contable", tipo: "especifica" },
+            { nombre: "Habilitar sub centro de costos en registro de compras", prioridad: 8, categoria: "Sistema", responsable: "Asistente Contable", tipo: "especifica" },
+            { nombre: "Carmen: Consultar lista de vinos para facturar", prioridad: 9, categoria: "Facturación", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Revisar préstamo vehicular JCA para emisión de factura 5% renta", prioridad: 9, categoria: "Facturación", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Revisar regalos a padres - emitir boletas por transferencias", prioridad: 10, categoria: "Facturación", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Solicitar factura para INCATEC a Carmen", prioridad: 11, categoria: "Facturación", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Enviar cronograma de cierre del mes", prioridad: 12, categoria: "Comunicación", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Cambiar correo y teléfono SUNAT de clave SOL INCATEC", prioridad: 13, categoria: "Trámites", responsable: "Contador", tipo: "especifica" },
+            { nombre: "Revisión de buzón electrónico SUNAT y SUNAFIL", categoria: "Diaria", responsable: "Asistente Contable", tipo: "recurrente", recurrencia: "diaria" },
+            { nombre: "Registro de facturas, RH, invoices y recibos (validar centro de costo)", categoria: "Diaria", responsable: "Asistente Contable", tipo: "recurrente", recurrencia: "diaria" },
+            { nombre: "Control y provisión de gastos recurrentes no facturados", categoria: "Mensual", responsable: "Asistente Contable", tipo: "recurrente", recurrencia: "mensual" },
+            { nombre: "Control SIRE semanal y coordinación para registro", categoria: "Semanal", responsable: "Asistente Contable", tipo: "recurrente", recurrencia: "semanal" },
+        ];
+
+        async function initFirebase() {
+            try {
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCmc9haHaL88lPOJJ7trk9g4xfg8UjXhC8",
+                    authDomain: "gestor-tareas-contador.firebaseapp.com",
+                    projectId: "gestor-tareas-contador",
+                    databaseURL: "https://gestor-tareas-contador-default-rtdb.firebaseio.com",
+                    storageBucket: "gestor-tareas-contador.firebasestorage.app",
+                    messagingSenderId: "208466259915",
+                    appId: "1:208466259915:web:970c83552264c6cad1504e"
+                };
+
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
+                
+                cargarDatos();
+                document.getElementById('fechaResumen').valueAsDate = new Date();
+                inicializar();
+            } catch (error) {
+                console.error('Error Firebase:', error);
+            }
+        }
+
+        function cargarDatos() {
+            if (!db) return;
+            
+            db.ref('tareas').on('value', (snapshot) => {
+                if (snapshot.val()) {
+                    tareas = Object.values(snapshot.val());
+                } else {
+                    tareas = tareasIniciales.map((t, i) => ({
+                        ...t,
+                        id: `inicial-${i}`,
+                        fecha: null,
+                        estado: 'pendiente',
+                        progreso: 0
+                    }));
+                    guardarEnFirebase();
+                }
+                actualizarUI();
+            });
+
+            db.ref('responsables').on('value', (snapshot) => {
+                if (snapshot.val()) {
+                    responsables = snapshot.val();
+                } else {
+                    responsables = ['Contador', 'Asistente Contable'];
+                    guardarEnFirebase();
+                }
+                actualizarFiltros();
+            });
+        }
+
+        function guardarEnFirebase() {
+            if (!db) return;
+            db.ref('tareas').set(tareas);
+            db.ref('responsables').set(responsables);
+        }
+
+        function actualizarUI() {
+            actualizarResumen();
+            filtrarTareas();
+            actualizarResponsables();
+        }
+
+        function inicializar() {
+            document.getElementById('fechaResumen').valueAsDate = new Date();
+            actualizarResumen();
+            filtrarTareas();
+            actualizarResponsables();
+            actualizarFiltros();
+        }
+
+        function cambiarTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Sin asignar';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('es-PE', { weekday: 'short', month: 'short', day: 'numeric' });
+        }
+
+        function getPriorityBadge(prioridad) {
+            if (!prioridad) return '<span class="badge badge-normal">Normal</span>';
+            if (prioridad <= 2) return '<span class="badge badge-critical">Crítica</span>';
+            if (prioridad <= 4) return '<span class="badge badge-high">Alta</span>';
+            return '<span class="badge badge-normal">Normal</span>';
+        }
+
+        function actualizarResumen() {
+            const fecha = document.getElementById('fechaResumen').value;
+            const fechaDate = new Date(fecha);
+            document.getElementById('fechaTexto').textContent = fechaDate.toLocaleDateString('es-PE', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            const tareasDelDia = tareas.filter(t => t.fecha === fecha && t.estado === 'pendiente');
+            const responsablesCounts = {};
+            
+            tareasDelDia.forEach(t => {
+                responsablesCounts[t.responsable] = (responsablesCounts[t.responsable] || 0) + 1;
+            });
+
+            let statsHTML = `<div class="stat-card"><div class="stat-label">Total para este día</div><div class="stat-value primary">${tareasDelDia.length}</div></div>`;
+            Object.entries(responsablesCounts).forEach(([resp, count]) => {
+                statsHTML += `<div class="stat-card"><div class="stat-label">${resp}</div><div class="stat-value primary">${count}</div></div>`;
+            });
+
+            document.getElementById('statsResumen').innerHTML = statsHTML;
+
+            if (tareasDelDia.length === 0) {
+                document.getElementById('tablaResumen').innerHTML = '<div class="empty-state"><div class="empty-state-icon">✨</div><p>No hay tareas pendientes para este día</p></div>';
+                return;
+            }
+
+            let tablaHTML = '<div class="card"><h2 style="margin-bottom: 1rem;">Tareas pendientes</h2><div class="table-responsive"><table><thead><tr><th>Tarea</th><th>Responsable</th><th>Prioridad</th><th>Progreso</th><th>Acción</th></tr></thead><tbody>';
+
+            tareasDelDia.sort((a, b) => (a.prioridad || 999) - (b.prioridad || 999)).forEach(tarea => {
+                tablaHTML += `
+                    <tr>
+                        <td><strong>${tarea.nombre}</strong><br><span style="color: var(--text-secondary); font-size: 0.85rem;">${tarea.categoria}</span></td>
+                        <td>${tarea.responsable}</td>
+                        <td>${getPriorityBadge(tarea.prioridad)}</td>
+                        <td><input type="range" style="width: 100px;" min="0" max="100" value="${tarea.progreso}" onchange="actualizarTarea('${tarea.id}', 'progreso', this.value)"> ${tarea.progreso}%</td>
+                        <td><button class="btn-success" onclick="marcarCompleto('${tarea.id}')" style="width: 100%;">✓ Hecho</button></td>
+                    </tr>
+                `;
+            });
+
+            tablaHTML += '</tbody></table></div></div>';
+            document.getElementById('tablaResumen').innerHTML = tablaHTML;
+        }
+
+        function marcarCompleto(id) {
+            const tarea = tareas.find(t => t.id === id);
+            if (tarea) {
+                tarea.estado = 'completado';
+                tarea.progreso = 100;
+                guardarEnFirebase();
+            }
+        }
+
+        function actualizarTareas() {
+            const filtro = obtenerFiltros();
+            const tareasFiltradas = tareas.filter(t => {
+                const matchResp = filtro.responsable === 'todos' || t.responsable === filtro.responsable;
+                const matchCat = filtro.categoria === 'todos' || t.categoria === filtro.categoria;
+                const matchBus = filtro.busqueda === '' || t.nombre.toLowerCase().includes(filtro.busqueda.toLowerCase());
+                return matchResp && matchCat && matchBus;
+            });
+
+            const stats = {
+                total: tareasFiltradas.length,
+                completadas: tareasFiltradas.filter(t => t.estado === 'completado').length,
+                pendientes: tareasFiltradas.filter(t => t.estado === 'pendiente').length,
+                progreso: tareasFiltradas.length > 0 ? Math.round(tareasFiltradas.reduce((s, t) => s + t.progreso, 0) / tareasFiltradas.length) : 0
+            };
+
+            document.getElementById('statsTareas').innerHTML = `
+                <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value primary">${stats.total}</div></div>
+                <div class="stat-card"><div class="stat-label">Completadas</div><div class="stat-value success">${stats.completadas}</div></div>
+                <div class="stat-card"><div class="stat-label">Pendientes</div><div class="stat-value warning">${stats.pendientes}</div></div>
+                <div class="stat-card"><div class="stat-label">Progreso</div><div class="stat-value primary">${stats.progreso}%</div></div>
+            `;
+
+            if (tareasFiltradas.length === 0) {
+                document.getElementById('listaTareas').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>No hay tareas</p></div>';
+                return;
+            }
+
+            let html = '';
+            tareasFiltradas.forEach(tarea => {
+                html += `
+                    <div class="task-item">
+                        <div class="task-header">
+                            <input type="checkbox" class="task-checkbox" ${tarea.estado === 'completado' ? 'checked' : ''} onchange="actualizarTarea('${tarea.id}', 'estado', this.checked ? 'completado' : 'pendiente')">
+                            <div style="flex: 1;">
+                                <div class="task-title ${tarea.estado === 'completado' ? 'completed' : ''}">${tarea.nombre}</div>
+                            </div>
+                        </div>
+                        <div class="task-meta">
+                            <span>👤 ${tarea.responsable}</span>
+                            <span>📂 ${tarea.categoria}</span>
+                            ${tarea.prioridad ? getPriorityBadge(tarea.prioridad) : ''}
+                        </div>
+                        <div class="input-group" style="margin-bottom: 0.75rem;">
+                            <label>Vencimiento: ${formatDate(tarea.fecha)}</label>
+                            <input type="date" value="${tarea.fecha || ''}" onchange="actualizarTarea('${tarea.id}', 'fecha', this.value)">
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label"><span>Progreso</span><span>${tarea.progreso}%</span></div>
+                            <input type="range" min="0" max="100" value="${tarea.progreso}" onchange="actualizarTarea('${tarea.id}', 'progreso', this.value)">
+                        </div>
+                        <button class="btn-danger" onclick="eliminarTarea('${tarea.id}')">🗑️ Eliminar</button>
+                    </div>
+                `;
+            });
+
+            document.getElementById('listaTareas').innerHTML = html;
+        }
+
+        function filtrarTareas() {
+            actualizarTareas();
+        }
+
+        function obtenerFiltros() {
+            return {
+                responsable: document.getElementById('filtroResponsable').value,
+                categoria: document.getElementById('filtroCategoria').value,
+                busqueda: document.getElementById('busqueda').value
+            };
+        }
+
+        function actualizarFiltros() {
+            const responsablesUnicos = [...new Set(tareas.map(t => t.responsable))].sort();
+            const categoriasUnicas = [...new Set(tareas.map(t => t.categoria))].sort();
+
+            let respHTML = '<option value="todos">Todos</option>';
+            responsablesUnicos.forEach(r => respHTML += `<option value="${r}">${r}</option>`);
+            document.getElementById('filtroResponsable').innerHTML = respHTML;
+            document.getElementById('nuevaTareaResponsable').innerHTML = responsablesUnicos.map(r => `<option value="${r}">${r}</option>`).join('');
+
+            let catHTML = '<option value="todos">Todas</option>';
+            categoriasUnicas.forEach(c => catHTML += `<option value="${c}">${c}</option>`);
+            document.getElementById('filtroCategoria').innerHTML = catHTML;
+        }
+
+        function agregarTarea() {
+            const nombre = document.getElementById('nuevaTarea').value;
+            if (!nombre.trim()) return;
+
+            const tarea = {
+                id: `custom-${Date.now()}`,
+                nombre: nombre,
+                categoria: 'Otros',
+                responsable: document.getElementById('nuevaTareaResponsable').value,
+                prioridad: parseInt(document.getElementById('nuevaTareaPrioridad').value),
+                tipo: 'especifica',
+                fecha: null,
+                estado: 'pendiente',
+                progreso: 0
+            };
+
+            tareas.push(tarea);
+            guardarEnFirebase();
+            document.getElementById('nuevaTarea').value = '';
+        }
+
+        function actualizarTarea(id, campo, valor) {
+            const tarea = tareas.find(t => t.id === id);
+            if (tarea) {
+                tarea[campo] = campo === 'progreso' ? parseInt(valor) : valor;
+                if (campo === 'estado' && valor === 'completado') {
+                    tarea.progreso = 100;
+                }
+                guardarEnFirebase();
+            }
+        }
+
+        function eliminarTarea(id) {
+            if (confirm('¿Eliminar esta tarea?')) {
+                tareas = tareas.filter(t => t.id !== id);
+                guardarEnFirebase();
+            }
+        }
+
+        function actualizarResponsables() {
+            let html = '';
+            responsables.forEach(resp => {
+                const tareasResp = tareas.filter(t => t.responsable === resp);
+                const completadas = tareasResp.filter(t => t.estado === 'completado').length;
+                const pendientes = tareasResp.filter(t => t.estado === 'pendiente').length;
+
+                html += `
+                    <div class="responsible-card">
+                        <div class="responsible-name">${resp}</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">${tareasResp.length} tareas asignadas</div>
+                        <div class="responsible-stats">
+                            <div class="stat-responsible">
+                                <div class="stat-responsible-label">Pendientes</div>
+                                <div class="stat-responsible-value" style="color: var(--warning);">${pendientes}</div>
+                            </div>
+                            <div class="stat-responsible">
+                                <div class="stat-responsible-label">Completadas</div>
+                                <div class="stat-responsible-value" style="color: var(--success);">${completadas}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('listaResponsables').innerHTML = html;
+        }
+
+        function agregarResponsable() {
+            const nombre = document.getElementById('nuevoResponsable').value.trim();
+            if (!nombre || responsables.includes(nombre)) return;
+
+            responsables.push(nombre);
+            guardarEnFirebase();
+            document.getElementById('nuevoResponsable').value = '';
+        }
+
+        initFirebase();
+    </script>
+</body>
+</html>

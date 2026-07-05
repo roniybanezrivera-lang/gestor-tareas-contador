@@ -54,24 +54,6 @@
             color: var(--text-secondary);
         }
 
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-        }
-
-        .error {
-            background-color: rgba(226, 75, 74, 0.1);
-            color: var(--danger);
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1rem;
-            border: 1px solid var(--danger);
-        }
-
         .tabs {
             display: flex;
             gap: 0;
@@ -408,16 +390,6 @@
                 grid-template-columns: 1fr 1fr;
             }
 
-            .tabs {
-                overflow-x: auto;
-                padding: 0;
-            }
-
-            .tab-btn {
-                padding: 1rem;
-                font-size: 0.85rem;
-            }
-
             th, td {
                 padding: 0.75rem;
             }
@@ -431,15 +403,6 @@
             <p>Gestión de tareas en tiempo real - Contador + Asistente</p>
         </header>
 
-        <div id="authSection" class="error" style="display: none; margin: 2rem 1.5rem;">
-            <h3>⚙️ Configuración necesaria</h3>
-            <p style="margin-top: 0.5rem; margin-bottom: 1rem;">Para que la aplicación funcione, necesitas configurar Firebase. <a href="#setup" style="color: var(--primary); font-weight: 600;">Ver instrucciones</a></p>
-            <div class="input-group" style="margin-bottom: 0;">
-                <label>API Key de Firebase</label>
-                <input type="text" id="apiKey" placeholder="Tu API Key de Firebase">
-            </div>
-        </div>
-
         <div class="tabs">
             <button class="tab-btn active" onclick="cambiarTab('resumen')">📋 Resumen</button>
             <button class="tab-btn" onclick="cambiarTab('tareas')">📊 Tareas</button>
@@ -447,7 +410,6 @@
         </div>
 
         <div class="content">
-            <!-- TAB: RESUMEN -->
             <div id="resumen" class="tab-content active">
                 <div class="card">
                     <h2 style="margin-bottom: 1rem;">Seleccionar día</h2>
@@ -462,7 +424,6 @@
                 <div id="tablaResumen"></div>
             </div>
 
-            <!-- TAB: TAREAS -->
             <div id="tareas" class="tab-content">
                 <div class="stat-grid" id="statsTareas"></div>
 
@@ -513,7 +474,6 @@
                 <div id="listaTareas"></div>
             </div>
 
-            <!-- TAB: RESPONSABLES -->
             <div id="responsables" class="tab-content">
                 <div class="card">
                     <h2 style="margin-bottom: 1rem;">Agregar responsable</h2>
@@ -540,6 +500,7 @@
         let db = null;
         let tareas = [];
         let responsables = ['Contador', 'Asistente Contable'];
+        
         const tareasIniciales = [
             { nombre: "Declarar impuestos SIRE de SOFT y GESTOR", prioridad: 1, categoria: "Impuestos", responsable: "Contador", tipo: "especifica" },
             { nombre: "Respuesta de Liliana para declarar impuestos de SOFT y GESTOR", prioridad: 2, categoria: "Impuestos", responsable: "Contador", tipo: "especifica" },
@@ -583,19 +544,14 @@
         async function initFirebase() {
             try {
                 const firebaseConfig = {
-  apiKey: "AIzaSyCmc9haHaL88lPOJJ7trk9g4xfg8UjXhC8",
-  authDomain: "gestor-tareas-contador.firebaseapp.com",
-  databaseURL: "https://gestor-tareas-contador-default-rtdb.firebaseio.com",
-  projectId: "gestor-tareas-contador",
-  storageBucket: "gestor-tareas-contador.firebasestorage.app",
-  messagingSenderId: "208466259915",
-  appId: "1:208466259915:web:970c83552264c6cad1504e"
-};
-
-                if (!firebaseConfig.projectId) {
-                    mostrarConfiguracion();
-                    return;
-                }
+                    apiKey: "AIzaSyCmc9haHaL88lPOJJ7trk9g4xfg8UjXhC8",
+                    authDomain: "gestor-tareas-contador.firebaseapp.com",
+                    projectId: "gestor-tareas-contador",
+                    databaseURL: "https://gestor-tareas-contador-default-rtdb.firebaseio.com",
+                    storageBucket: "gestor-tareas-contador.firebasestorage.app",
+                    messagingSenderId: "208466259915",
+                    appId: "1:208466259915:web:970c83552264c6cad1504e"
+                };
 
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.database();
@@ -605,12 +561,7 @@
                 inicializar();
             } catch (error) {
                 console.error('Error Firebase:', error);
-                mostrarConfiguracion();
             }
-        }
-
-        function mostrarConfiguracion() {
-            document.getElementById('authSection').style.display = 'block';
         }
 
         function cargarDatos() {
@@ -683,7 +634,6 @@
             return '<span class="badge badge-normal">Normal</span>';
         }
 
-        // RESUMEN
         function actualizarResumen() {
             const fecha = document.getElementById('fechaResumen').value;
             const fechaDate = new Date(fecha);
@@ -740,7 +690,6 @@
             }
         }
 
-        // TAREAS
         function actualizarTareas() {
             const filtro = obtenerFiltros();
             const tareasFiltradas = tareas.filter(t => {
@@ -865,7 +814,6 @@
             }
         }
 
-        // RESPONSABLES
         function actualizarResponsables() {
             let html = '';
             responsables.forEach(resp => {
@@ -903,7 +851,6 @@
             document.getElementById('nuevoResponsable').value = '';
         }
 
-        // INIT
         initFirebase();
     </script>
 </body>
